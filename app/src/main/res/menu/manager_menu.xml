@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="Home"
+        android:icon="@drawable/home" />
+    <item
+        android:id="@+id/nav_add"
+        android:title="Add Item"
+        android:icon="@drawable/add2" />
+    <item
+        android:id="@+id/nav_staff"
+        android:title="Staff Management"
+        android:icon="@drawable/staff2" />
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Settings"
+        android:icon="@drawable/settings2" />
+    <item
+        android:id="@+id/nav_search"
+        android:title="Search by Code"
+        android:icon="@drawable/search2" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Log Out"
+        android:icon="@drawable/logout"/>
+</menu>
+

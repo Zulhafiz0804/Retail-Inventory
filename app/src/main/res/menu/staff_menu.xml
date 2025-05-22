@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/navi_home" android:title="Home" android:icon="@drawable/home" />
+    <item android:id="@+id/nav_scan_qr" android:title="Scan QR Code" android:icon="@drawable/qr_code2" />
+    <item android:id="@+id/nav_search_code" android:title="Search by Code" android:icon="@drawable/search2"/>
+    <item android:id="@+id/nav_logout" android:title="Log Out" android:icon="@drawable/logout"/>
+</menu>
+
+
+

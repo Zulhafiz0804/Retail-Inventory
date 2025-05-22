@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Optional: Decorative background image with overlay effect -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"
+        android:alpha="0.4"
+        android:contentDescription="Background" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Product Image in CardView -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <ImageView
+                    android:id="@+id/productImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:contentDescription="Product Image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Grouping form in card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/editProductName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Baju Melayu Cekak Musang"
+                        android:textColor="#212121"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Product Code -->
+                    <TextView
+                        android:id="@+id/itemCodeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Item Code"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Description Section -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/descriptionLabel"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Description"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textColor="#333333" />
+
+                            <ImageButton
+                                android:id="@+id/btnToggleDescription"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/drop1"
+                                android:contentDescription="Expand or collapse description" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/editProductDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Modern Design"
+                            android:textSize="16sp"
+                            android:textColor="#212121"
+                            android:paddingTop="8dp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                    <!-- Size Controls -->
+                    <LinearLayout
+                        android:id="@+id/sizeContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- Quantity Controls -->
+                    <LinearLayout
+                        android:id="@+id/quantityContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Color Selection -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select Color"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/edittext_background"
+                        android:padding="10dp" />
+
+                    <!-- Size Selection -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Select Size"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/edittext_background"
+                        android:padding="10dp" />
+
+                    <!-- Quantity Input -->
+                    <EditText
+                        android:id="@+id/editQuantity"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Quantity"
+                        android:inputType="number"
+                        android:background="@drawable/edittext_background"
+                        android:padding="10dp"
+                        android:textSize="16sp"
+                        android:textColor="#212121"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Price Input -->
+                    <EditText
+                        android:id="@+id/editProductPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="RM 0.00"
+                        android:inputType="numberDecimal"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:padding="10dp"
+                        android:background="@drawable/edittext_background"
+                        android:textColor="#212121"
+                        android:layout_marginBottom="16dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#794E37"
+                android:padding="14dp"
+                android:textSize="18sp"
+                android:layout_marginBottom="24dp" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

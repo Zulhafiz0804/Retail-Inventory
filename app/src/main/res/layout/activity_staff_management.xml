@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background Image -->
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background"
+        android:alpha="0.4"
+        android:contentDescription="Background" />
+
+    <!-- Scrollable Main Content -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnAddStaff"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/mainContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- RecyclerView Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/recycler_background"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="4dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewStaff"
+                    android:layout_width="match_parent"
+                    android:layout_height="550dp"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Fixed Add New Staff Button at Bottom -->
+    <Button
+        android:id="@+id/btnAddStaff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:text="Add New Staff"
+        android:textSize="16sp"
+        android:backgroundTint="#794E37"
+        android:textColor="@android:color/white"
+        android:letterSpacing="0.03"
+        android:paddingVertical="14dp" />
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background Image -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"
+        android:contentDescription="Background"
+        android:alpha="0.2" />
+
+    <!-- Foreground Content -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Main Content Layout -->
+        <LinearLayout
+            android:id="@+id/mainLayout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:elevation="6dp">
+
+            <!-- Static Fields -->
+            <EditText
+                android:id="@+id/editItemName"
+                android:hint="Item Name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editItemDescription"
+                android:hint="Item Description"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editItemPrice"
+                android:hint="Price"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editItemCode"
+                android:hint="Item Code"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <!-- Dynamic Color Container -->
+            <LinearLayout
+                android:id="@+id/colorContainer"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/btnAddColor"
+                android:text="Add Color Entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#C2B280"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btnSaveProduct"
+                android:text="Save Product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#794E37"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemSizeControl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="4dp">
+
+    <TextView
+        android:id="@+id/sizeLabel"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Size"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#009688" />
+
+    <Button
+        android:id="@+id/btnDecrease"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:text="−"
+        android:textSize="22sp"
+        android:backgroundTint="#DDDDDD"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+    <TextView
+        android:id="@+id/quantityTextView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="0"
+        android:textSize="18sp"
+        android:textColor="#212121" />
+
+    <Button
+        android:id="@+id/btnIncrease"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:text="+"
+        android:textSize="22sp"
+        android:backgroundTint="#DDDDDD"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+</LinearLayout>
