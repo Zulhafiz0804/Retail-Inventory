@@ -13,13 +13,18 @@
         android:title="Staff Management"
         android:icon="@drawable/staff2" />
     <item
-        android:id="@+id/nav_settings"
-        android:title="Settings"
-        android:icon="@drawable/settings2" />
-    <item
         android:id="@+id/nav_search"
         android:title="Search by Code"
         android:icon="@drawable/search2" />
+    <item
+        android:id="@+id/nav_status"
+        android:title="Inventory Status"
+        android:icon="@drawable/status2" />
+    <item
+        android:id="@+id/nav_about"
+        android:title="About"
+        android:icon="@drawable/info" />
+
     <item
         android:id="@+id/nav_logout"
         android:title="Log Out"

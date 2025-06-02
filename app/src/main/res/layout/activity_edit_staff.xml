@@ -132,13 +132,14 @@
                         android:hint="Role"
                         android:layout_marginBottom="24dp" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSave"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Save Changes"
                         android:textColor="#FFFFFF"
-                        android:backgroundTint="#794E37"
+                        android:textAllCaps="false"
+                        android:background="@drawable/btn_login_gradient"
                         android:padding="12dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -33,12 +33,14 @@
                 android:hint="Search by code"
                 android:inputType="text" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
-                android:backgroundTint="#794E37"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:background="@drawable/btn_login_gradient"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp" />
 

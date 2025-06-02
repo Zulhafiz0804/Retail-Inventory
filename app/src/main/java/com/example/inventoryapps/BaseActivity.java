@@ -69,10 +69,12 @@ public class BaseActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AddProductActivity.class));
             } else if (id == R.id.nav_staff) {
                 startActivity(new Intent(this, StaffManagementActivity.class));
-            } else if (id == R.id.nav_settings) {
-                startActivity(new Intent(this, SettingsActivity.class));
+            } else if (id == R.id.nav_about) {
+                startActivity(new Intent(this, AboutActivity.class));
             } else if (id == R.id.nav_search) {
                 startActivity(new Intent(this, ManagerSearchActivity.class));
+            } else if (id == R.id.nav_status) {
+                startActivity(new Intent(this, InventoryStatusActivity.class));
             } else if (id == R.id.nav_logout) {
                 performLogout();
             } else {

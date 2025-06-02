@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -53,10 +53,12 @@ public class ManagerActivity extends BaseActivity {
                 Intent intent = new Intent(ManagerActivity.this, StaffManagementActivity.class);
                 intent.putExtra("managerId", managerId);
                 startActivity(intent);
-            } else if (itemId == R.id.nav_settings) {
-                startActivity(new Intent(ManagerActivity.this, SettingsActivity.class));
+            } else if (itemId == R.id.nav_about) {
+                startActivity(new Intent(ManagerActivity.this, AboutActivity.class));
             } else if (itemId == R.id.nav_search) {
                 startActivity(new Intent(ManagerActivity.this, ManagerSearchActivity.class));
+            } else if (itemId == R.id.nav_status) {
+                startActivity(new Intent(ManagerActivity.this, InventoryStatusActivity.class));
             }
 
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -83,10 +85,14 @@ public class ManagerActivity extends BaseActivity {
     }
 
     public void openSettings(View view) {
-        startActivity(new Intent(this, SettingsActivity.class));
+        startActivity(new Intent(this, AboutActivity.class));
     }
 
     public void openSearch(View view) {
         startActivity(new Intent(this, ManagerSearchActivity.class));
     }
+    public void openInventoryStatus(View view) {
+        startActivity(new Intent(this, InventoryStatusActivity.class));
+    }
+
 }

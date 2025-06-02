@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:backgroundTint="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item Name"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#212121" />
+
+        <TextView
+            android:id="@+id/textCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Code"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/textColorSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Red | M"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/textQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qty: 30 (30%)"
+            android:textSize="14sp"
+            android:textColor="#424242"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/textRestockHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚠️ This item is understocked. Consider restocking."
+            android:textColor="#D32F2F"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

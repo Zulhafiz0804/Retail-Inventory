@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class QRScanActivity extends BaseActivity {
@@ -23,9 +27,9 @@ public class QRScanActivity extends BaseActivity {
         db = FirebaseFirestore.getInstance();
 
         new IntentIntegrator(this)
-                .setCaptureActivity(PortraitCaptureActivity.class)  // Use your custom activity
+                .setCaptureActivity(PortraitCaptureActivity.class)
                 .setPrompt("Scan QR Code")
-                .setOrientationLocked(true)                         // Lock orientation to prevent auto-rotate
+                .setOrientationLocked(true)
                 .setBeepEnabled(true)
                 .setBarcodeImageEnabled(true)
                 .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
@@ -41,7 +45,6 @@ public class QRScanActivity extends BaseActivity {
             if (result.getContents() != null) {
                 String scannedCode = result.getContents();
 
-                // Match 'item_code' field in INVENTORY_ITEM collection
                 db.collection("INVENTORY_ITEM")
                         .whereEqualTo("item_code", scannedCode)
                         .get()
@@ -50,15 +53,13 @@ public class QRScanActivity extends BaseActivity {
                                 if (!task.getResult().isEmpty()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String productId = document.getId();
-                                        String staffId = AuthHelper.getCurrentStaffId();
-                                        long timestamp = System.currentTimeMillis();
+                                        String staffId = AuthHelper.getCurrentStaffId(getApplicationContext());
+                                        Timestamp timestamp = Timestamp.now();
 
-                                        // Get current count of QR_CODE documents to create next qr_id
                                         db.collection("QR_CODE").get().addOnSuccessListener(snapshot -> {
                                             int count = snapshot.size() + 1;
                                             String qrId = String.format("qr%02d", count);
 
-                                            // Create QR_CODE document
                                             Map<String, Object> qrEntry = new HashMap<>();
                                             qrEntry.put("qr_id", qrId);
                                             qrEntry.put("item_code", scannedCode);
@@ -67,19 +68,27 @@ public class QRScanActivity extends BaseActivity {
 
                                             db.collection("QR_CODE").document(qrId).set(qrEntry);
 
-                                            // Optional: Log to ACTIVITY_LOG
-                                            Map<String, Object> logEntry = new HashMap<>();
-                                            logEntry.put("staff_id", staffId);
-                                            logEntry.put("action", "Scanned QR");
-                                            logEntry.put("item_code", scannedCode);
-                                            logEntry.put("timestamp", timestamp);
-                                            db.collection("ACTIVITY_LOG").add(logEntry);
+                                            // Create log_id with date suffix
+                                            db.collection("ACTIVITY_LOG").get().addOnSuccessListener(logSnapshot -> {
+                                                int logCount = logSnapshot.size() + 1;
+                                                String dateSuffix = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+                                                String logId = String.format("log%02d_%s", logCount, dateSuffix);
 
-                                            // Navigate to ProductDetailsActivity
-                                            Intent intent = new Intent(QRScanActivity.this, ProductDetailsActivity.class);
-                                            intent.putExtra("productId", productId);
-                                            startActivity(intent);
-                                            finish();
+                                                Map<String, Object> logEntry = new HashMap<>();
+                                                logEntry.put("log_id", logId);
+                                                logEntry.put("staff_id", staffId);
+                                                logEntry.put("action", "Scanned QR");
+                                                logEntry.put("item_code", scannedCode);
+                                                logEntry.put("timestamp", timestamp);
+
+                                                db.collection("ACTIVITY_LOG").document(logId).set(logEntry);
+
+                                                // Navigate to ProductDetailsActivity
+                                                Intent intent = new Intent(QRScanActivity.this, ProductDetailsActivity.class);
+                                                intent.putExtra("productId", productId);
+                                                startActivity(intent);
+                                                finish();
+                                            });
                                         });
                                         return;
                                     }
@@ -90,7 +99,7 @@ public class QRScanActivity extends BaseActivity {
                                     finish();
                                 }
                             } else {
-                                Toast.makeText(QRScanActivity.this, "firestore Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(QRScanActivity.this, "Firestore error", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         });

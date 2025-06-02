@@ -67,14 +67,6 @@
                 <TextView android:text="Staff Management" style="@style/ButtonText"/>
             </LinearLayout>
 
-            <!-- Settings Button -->
-            <LinearLayout
-                style="@style/DashboardButton"
-                android:onClick="openSettings">
-                <ImageView android:src="@drawable/settings" style="@style/IconStyle"/>
-                <TextView android:text="Settings" style="@style/ButtonText"/>
-            </LinearLayout>
-
             <!-- Search by Code Button -->
             <LinearLayout
                 style="@style/DashboardButton"
@@ -82,6 +74,22 @@
                 <ImageView android:src="@drawable/search" style="@style/IconStyle"/>
                 <TextView android:text="Search by Code" style="@style/ButtonText"/>
             </LinearLayout>
+
+            <LinearLayout
+                style="@style/DashboardButton"
+                android:onClick="openInventoryStatus">
+                <ImageView android:src="@drawable/status" style="@style/IconStyle"/>
+                <TextView android:text="Inventory Status" style="@style/ButtonText"/>
+            </LinearLayout>
+
+            <!-- Settings Button -->
+            <LinearLayout
+                style="@style/DashboardButton"
+                android:onClick="openSettings">
+                <ImageView android:src="@drawable/info" style="@style/IconStyle"/>
+                <TextView android:text="About Us" style="@style/ButtonText"/>
+            </LinearLayout>
+
         </GridLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -26,10 +27,12 @@ public class ProductDetailsActivity extends BaseActivity {
     ImageView productImage;
     Spinner colorSpinner;
     LinearLayout sizeContainer;
+    ImageButton btnToggleDescription;
 
     private FirebaseFirestore firestore;
     private Map<String, Map<String, Long>> quantities = new HashMap<>();
     private Map<String, String> image;
+    private boolean isDescriptionVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,22 @@ public class ProductDetailsActivity extends BaseActivity {
         productImage = findViewById(R.id.productImage);
         colorSpinner = findViewById(R.id.colorSpinner);
         sizeContainer = findViewById(R.id.sizeContainer);
+        btnToggleDescription = findViewById(R.id.btnToggleDescription);
+
+        // Initially hide description and set toggle icon
+        description.setVisibility(View.GONE);
+        btnToggleDescription.setImageResource(R.drawable.drop1);
+
+        btnToggleDescription.setOnClickListener(v -> {
+            if (isDescriptionVisible) {
+                description.setVisibility(View.GONE);
+                btnToggleDescription.setImageResource(R.drawable.drop1);
+            } else {
+                description.setVisibility(View.VISIBLE);
+                btnToggleDescription.setImageResource(R.drawable.drop2);
+            }
+            isDescriptionVisible = !isDescriptionVisible;
+        });
 
         String productId = getIntent().getStringExtra("productId");
 

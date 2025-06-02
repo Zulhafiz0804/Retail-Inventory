@@ -28,12 +28,14 @@
             android:layout_weight="1"
             android:hint="Image URL (e.g., Direct Link from Postimg)" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnPasteImageUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="#794E37"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_login_gradient"
             android:text="Paste" />
     </LinearLayout>
 

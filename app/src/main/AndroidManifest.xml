@@ -31,7 +31,7 @@
         <activity android:name=".ManagerActivity" />
         <activity android:name=".StaffActivity" />
         <activity android:name=".InventoryActivity" />
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AboutActivity" />
         <activity android:name=".ManagerSearchActivity" />
         <activity android:name=".StaffManagementActivity" />
         <activity android:name=".QRScanActivity" />
@@ -49,6 +49,7 @@
         <activity android:name=".AuthHelper" />
         <activity android:name=".EditStaffActivity" />
         <activity android:name=".AddProductActivity" />
+        <activity android:name=".InventoryStatusActivity" />
 
     </application>
 </manifest>
