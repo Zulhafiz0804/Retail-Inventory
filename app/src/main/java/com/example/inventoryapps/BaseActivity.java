@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,12 +28,11 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);  // Must have drawer & toolbar
+        setContentView(R.layout.activity_base);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
-        // Setup toolbar
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
@@ -42,21 +44,42 @@ public class BaseActivity extends AppCompatActivity {
 
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
 
-        // 🚀 Automatically set menu based on user role
         setNavigationMenuBasedOnUserRole();
+        setupNavigationHeader();
     }
 
     private void setNavigationMenuBasedOnUserRole() {
         SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
-        role = prefs.getString("user_role", "staff"); // ✅ FIXED: assign to the class field
+        role = prefs.getString("user_role", "staff");
 
-        navigationView.getMenu().clear(); // Prevent duplicates
+        navigationView.getMenu().clear();
 
         if ("manager".equalsIgnoreCase(role)) {
             navigationView.inflateMenu(R.menu.manager_menu);
         } else {
             navigationView.inflateMenu(R.menu.staff_menu);
         }
+    }
+
+    private void setupNavigationHeader() {
+        View headerView = navigationView.getHeaderView(0);
+        TextView textUserName = headerView.findViewById(R.id.text_user_name);
+        TextView textUserRole = headerView.findViewById(R.id.text_user_role);
+        ImageView imageProfile = headerView.findViewById(R.id.image_profile);
+
+        SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        String userName = prefs.getString("user_name", "Staff");
+        String userRole = prefs.getString("user_role", "staff");
+
+        textUserName.setText(userName);
+        textUserRole.setText(capitalize(userRole));
+
+        imageProfile.setImageResource(R.drawable.username1);
+    }
+
+    private String capitalize(String input) {
+        if (input == null || input.isEmpty()) return "";
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 
     private boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -97,27 +120,23 @@ public class BaseActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
     private void performLogout() {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Confirm Logout")
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    // Clear saved session
                     SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
                     prefs.edit().clear().apply();
 
-                    // Show toast
                     Toast.makeText(this, "You have been logged out", Toast.LENGTH_SHORT).show();
 
-                    // Go back to login screen
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    dialog.dismiss(); // Just close the dialog
-                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 }

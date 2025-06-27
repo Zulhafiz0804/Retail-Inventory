@@ -29,11 +29,11 @@ public class RecentSearchAdapter extends RecyclerView.Adapter<RecentSearchAdapte
 
     @Override
     public void onBindViewHolder(RecentSearchAdapter.ViewHolder holder, int position) {
-        String code = recentList.get(position);
-        holder.tvRecentCode.setText(code);
+        String productId = recentList.get(position);
+        holder.tvRecentCode.setText(productId);
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailsActivity.class);
-            intent.putExtra("productCode", code);
+            intent.putExtra("productId", productId);
             context.startActivity(intent);
         });
     }

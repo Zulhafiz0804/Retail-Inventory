@@ -1,3 +1,4 @@
+// MainActivity.java
 package com.example.inventoryapps;
 
 import android.content.Context;
@@ -27,13 +28,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Check if user is already signed in
         SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
         String role = prefs.getString("user_role", null);
         String userId = prefs.getString("user_id", null);
 
         if (role != null && userId != null) {
-            // Redirect to correct activity
             if (role.equals("manager")) {
                 Intent intent = new Intent(MainActivity.this, ManagerActivity.class);
                 intent.putExtra("managerId", userId);
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         handler.post(flipRunnable);
 
         btnLogin.setOnClickListener(v -> {
-            String email = etUsername.getText().toString().trim();
+            String email = etUsername.getText().toString().trim().toLowerCase();
             String password = etPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
@@ -100,10 +99,14 @@ public class MainActivity extends AppCompatActivity {
                         String dbPassword = doc.getString("password");
 
                         if (dbPassword != null && dbPassword.equals(password)) {
+                            String name = doc.getString("manager_name");
+                            if (name == null || name.isEmpty()) name = "Manager";
+
                             SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
                             prefs.edit()
                                     .putString("user_role", "manager")
                                     .putString("user_id", doc.getId())
+                                    .putString("user_name", name)
                                     .apply();
 
                             Intent intent = new Intent(MainActivity.this, ManagerActivity.class);
@@ -124,10 +127,14 @@ public class MainActivity extends AppCompatActivity {
                                         String dbPassword = doc.getString("password");
 
                                         if (dbPassword != null && dbPassword.equals(password)) {
+                                            String name = doc.getString("staff_name");
+                                            if (name == null || name.isEmpty()) name = "Staff";
+
                                             SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
                                             prefs.edit()
                                                     .putString("user_role", "staff")
                                                     .putString("user_id", doc.getId())
+                                                    .putString("user_name", name)
                                                     .apply();
 
                                             Intent intent = new Intent(MainActivity.this, StaffActivity.class);

@@ -30,19 +30,19 @@
             <!-- Product Image -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="10dp">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <ImageView
                     android:id="@+id/productImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
+                    android:layout_height="450dp"
+                    android:layout_margin="8dp"
+                    android:background="#F0F0F0"
                     android:contentDescription="Product Image"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder" />
+                    android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
             <!-- Product Info Card -->

@@ -54,6 +54,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Category"
+                android:textStyle="bold"
+                android:textColor="#222222"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp" />
+
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"/>
+
+            <TextView
+                android:id="@+id/categoryDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#757575"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
+
             <!-- Dynamic Color Container -->
             <LinearLayout
                 android:id="@+id/colorContainer"
@@ -77,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#794E37"
                 android:layout_marginTop="16dp" />
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

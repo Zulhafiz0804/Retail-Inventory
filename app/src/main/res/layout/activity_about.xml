@@ -52,7 +52,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="About the App"
-                            android:textSize="14sp"
+                            android:textAlignment="center"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#000000" />
 
@@ -102,7 +103,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Developer Credits"
-                            android:textSize="14sp"
+                            android:textAlignment="center"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#000000" />
 
@@ -153,8 +155,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Contact Support"
+                            android:textAlignment="center"
                             android:textColor="#000000"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <ImageView
@@ -202,7 +205,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="How to Use the App"
-                            android:textSize="14sp"
+                            android:textAlignment="center"
+                            android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#000000" />
 

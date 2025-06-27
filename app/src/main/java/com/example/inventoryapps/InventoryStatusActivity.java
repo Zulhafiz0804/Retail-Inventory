@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -77,10 +78,10 @@ public class InventoryStatusActivity extends BaseActivity {
         if (item.getItemId() == R.id.action_toggle_sort) {
             if (isAscending) {
                 adapter.sortByStockLevelDescending();
-                item.setIcon(R.drawable.descending); // Optional: change icon
+                item.setIcon(R.drawable.descending1); // Optional: change icon
             } else {
                 adapter.sortByStockLevel();
-                item.setIcon(R.drawable.ascending); // Optional: change icon
+                item.setIcon(R.drawable.ascending1); // Optional: change icon
             }
             isAscending = !isAscending;
             return true;
@@ -138,6 +139,7 @@ public class InventoryStatusActivity extends BaseActivity {
 
         static class ViewHolder extends RecyclerView.ViewHolder {
             TextView textName, textCode, textColorSize, textQuantity, textRestockHint;
+            Button btnEditQuantity;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -146,6 +148,7 @@ public class InventoryStatusActivity extends BaseActivity {
                 textColorSize = itemView.findViewById(R.id.textColorSize);
                 textQuantity = itemView.findViewById(R.id.textQuantity);
                 textRestockHint = itemView.findViewById(R.id.textRestockHint);
+                btnEditQuantity = itemView.findViewById(R.id.btnEditQuantity);
             }
         }
 
@@ -183,9 +186,16 @@ public class InventoryStatusActivity extends BaseActivity {
             } else {
                 holder.textRestockHint.setVisibility(View.GONE);
             }
-
+            // 👉 Add Edit Button Logic Here
+            holder.btnEditQuantity.setOnClickListener(v -> {
+                android.content.Context context = v.getContext();
+                android.content.Intent intent = new android.content.Intent(context, InventoryActivity.class);
+                intent.putExtra("productCode", item.code);      // Send code
+                intent.putExtra("itemColor", item.color);       // Send color
+                intent.putExtra("itemSize", item.size);         // Send size
+                context.startActivity(intent);
+            });
         }
-
             @Override
         public int getItemCount() {
             return items.size();

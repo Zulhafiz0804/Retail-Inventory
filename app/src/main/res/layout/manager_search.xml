@@ -26,23 +26,53 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <EditText
-                android:id="@+id/searchBar"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/search_card"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:hint="Search by code"
-                android:inputType="text" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnSearch"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_login_gradient"
-                android:layout_gravity="end"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:id="@+id/btnFilterIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="Filter"
+                        android:padding="8dp"
+                        android:src="@drawable/filter2" />
+
+                    <EditText
+                        android:id="@+id/searchBar"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#C0C0C0"
+                        android:hint="Search by code"
+                        android:padding="10dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/btnSearchIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="Search"
+                        android:padding="8dp"
+                        android:src="@drawable/search2" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
 
             <ListView
                 android:id="@+id/listViewProducts"

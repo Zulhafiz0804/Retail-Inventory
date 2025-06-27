@@ -43,7 +43,6 @@
                     android:scaleType="centerCrop"
                     android:layout_margin="8dp"
                     android:background="#F0F0F0"
-                    android:src="@drawable/placeholder"
                     android:contentDescription="Product image" />
             </androidx.cardview.widget.CardView>
 

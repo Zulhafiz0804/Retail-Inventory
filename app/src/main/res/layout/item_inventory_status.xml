@@ -60,5 +60,17 @@
             android:visibility="gone"
             android:layout_marginTop="4dp" />
 
+        <Button
+            android:id="@+id/btnEditQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#1976D2"
+            android:textColor="#FFFFFF"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_gravity="end"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

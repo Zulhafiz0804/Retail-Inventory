@@ -48,6 +48,9 @@ public class InventoryActivity extends BaseActivity {
 
     private boolean isDescriptionVisible = false;
 
+    private String preselectedColor = null;
+    private String preselectedSize = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,24 +75,23 @@ public class InventoryActivity extends BaseActivity {
         productDescriptionEditText.setVisibility(View.GONE);
         btnToggleDescription.setImageResource(R.drawable.drop1);
 
-        btnToggleDescription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isDescriptionVisible) {
-                    productDescriptionEditText.setVisibility(View.GONE);
-                    btnToggleDescription.setImageResource(R.drawable.drop1);
-                } else {
-                    productDescriptionEditText.setVisibility(View.VISIBLE);
-                    btnToggleDescription.setImageResource(R.drawable.drop2);
-                }
-                isDescriptionVisible = !isDescriptionVisible;
+        btnToggleDescription.setOnClickListener(v -> {
+            if (isDescriptionVisible) {
+                productDescriptionEditText.setVisibility(View.GONE);
+                btnToggleDescription.setImageResource(R.drawable.drop1);
+            } else {
+                productDescriptionEditText.setVisibility(View.VISIBLE);
+                btnToggleDescription.setImageResource(R.drawable.drop2);
             }
+            isDescriptionVisible = !isDescriptionVisible;
         });
 
         firestore = FirebaseFirestore.getInstance();
 
         if (getIntent() != null && getIntent().hasExtra("productCode")) {
             item_code = getIntent().getStringExtra("productCode");
+            preselectedColor = getIntent().getStringExtra("itemColor");
+            preselectedSize = getIntent().getStringExtra("itemSize");
             loadProductFromFirestore(item_code);
         }
 
@@ -143,17 +145,23 @@ public class InventoryActivity extends BaseActivity {
                     colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerColor.setAdapter(colorAdapter);
 
+                    // Auto-select preselected color if available
+                    if (preselectedColor != null && colorList.contains(preselectedColor)) {
+                        spinnerColor.setSelection(colorList.indexOf(preselectedColor));
+                    }
+
                     spinnerColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             String selectedColor = colorList.get(position);
                             Map<String, Object> sizes = (Map<String, Object>) quantitiesData.get(selectedColor);
-                            List<String> sizeList = Arrays.asList("S", "M", "L", "XL", "XXL");
+                            List<String> sizeList = new ArrayList<>(sizes.keySet());
 
                             ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(InventoryActivity.this, android.R.layout.simple_spinner_item, sizeList);
                             sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerSize.setAdapter(sizeAdapter);
 
+                            // Auto-select image
                             if (imageMap != null && imageMap.containsKey(selectedColor)) {
                                 Glide.with(InventoryActivity.this)
                                         .load(imageMap.get(selectedColor))
@@ -162,8 +170,14 @@ public class InventoryActivity extends BaseActivity {
                                 inventoryProductImage.setImageDrawable(null);
                             }
 
+                            // Auto-select preselected size if valid
+                            if (preselectedSize != null && sizeList.contains(preselectedSize)) {
+                                spinnerSize.setSelection(sizeList.indexOf(preselectedSize));
+                            }
+
+                            // Set default quantity
                             if (!sizeList.isEmpty()) {
-                                String firstSize = sizeList.get(0);
+                                String firstSize = spinnerSize.getSelectedItem().toString();
                                 Object quantity = sizes.get(firstSize);
                                 editQuantity.setText(String.valueOf(((Long) quantity).intValue()));
                             }
@@ -200,11 +214,10 @@ public class InventoryActivity extends BaseActivity {
 
         Map<String, Object> log = new HashMap<>();
         log.put("timestamp", Timestamp.now());
-        log.put("action", "update_quantity");  // or "add_item" depending on context
+        log.put("action", "update_quantity");
         log.put("item_id", code);
         log.put("manager_id", updatedBy);
 
-        // Create a custom doc ID using current time (or use UUID.randomUUID().toString() if preferred)
         String docId = "log_" + System.currentTimeMillis();
 
         firestore.collection("ACTIVITY_LOG")

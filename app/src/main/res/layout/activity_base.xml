@@ -35,6 +35,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="#FFFFFF"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/staff_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

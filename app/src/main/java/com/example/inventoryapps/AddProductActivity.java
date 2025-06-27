@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.*;
@@ -15,8 +16,13 @@ public class AddProductActivity extends BaseActivity {
     private EditText editItemName, editItemDescription, editItemPrice, editItemCode;
     private LinearLayout colorContainer;
     private Button btnAddColor, btnSaveProduct;
+    private Spinner spinnerCategory;
 
     private FirebaseFirestore firestore;
+
+    // For category spinner
+    private List<String> categoryNames = new ArrayList<>();
+    private Map<String, String> categoryMap = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,13 +40,58 @@ public class AddProductActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         btnAddColor = findViewById(R.id.btnAddColor);
         btnSaveProduct = findViewById(R.id.btnSaveProduct);
+        spinnerCategory = findViewById(R.id.spinnerCategory); // Ensure spinner exists in XML
 
         btnAddColor.setOnClickListener(v -> addColorEntry());
 
         btnSaveProduct.setOnClickListener(v -> saveProductToFirestore());
 
-        // Add default one
-        addColorEntry();
+        addColorEntry(); // Add default one
+
+        loadCategories(); // <-- Load categories into spinner
+    }
+
+    private void loadCategories() {
+        FirebaseFirestore.getInstance().collection("PRODUCT_CATEGORY")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        String id = doc.getString("category_id");
+                        String name = doc.getString("category_name");
+                        categoryMap.put(name, id);
+                        categoryNames.add(name);
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                            android.R.layout.simple_spinner_dropdown_item, categoryNames);
+                    spinnerCategory.setAdapter(adapter);
+
+                    // 🟨 ADD SPINNER LISTENER TO SHOW DESCRIPTION
+                    spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            String selectedCategoryName = categoryNames.get(position);
+                            String selectedCategoryId = categoryMap.get(selectedCategoryName);
+
+                            FirebaseFirestore.getInstance().collection("PRODUCT_CATEGORY")
+                                    .whereEqualTo("category_id", selectedCategoryId)
+                                    .limit(1)
+                                    .get()
+                                    .addOnSuccessListener(docs -> {
+                                        if (!docs.isEmpty()) {
+                                            String description = docs.getDocuments().get(0).getString("description");
+                                            TextView descriptionText = findViewById(R.id.categoryDescription);
+                                            descriptionText.setText(description != null ? description : "No description");
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {}
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load categories", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void addColorEntry() {
@@ -63,15 +114,16 @@ public class AddProductActivity extends BaseActivity {
         colorContainer.addView(colorEntryView);
     }
 
-
     private void saveProductToFirestore() {
         String name = editItemName.getText().toString().trim();
         String desc = editItemDescription.getText().toString().trim();
         String code = editItemCode.getText().toString().trim();
         String priceStr = editItemPrice.getText().toString().trim();
+        String selectedCategory = (String) spinnerCategory.getSelectedItem();
+        String categoryId = categoryMap.get(selectedCategory);
 
-        if (name.isEmpty() || desc.isEmpty() || code.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(this, "Fill all main product fields", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || desc.isEmpty() || code.isEmpty() || priceStr.isEmpty() || categoryId == null) {
+            Toast.makeText(this, "Fill all main product fields including category", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -114,6 +166,7 @@ public class AddProductActivity extends BaseActivity {
         productData.put("price", price);
         productData.put("image", imageMap);
         productData.put("quantities", quantitiesMap);
+        productData.put("category_id", categoryId); // Add category ID
 
         firestore.collection("INVENTORY_ITEM").document(code)
                 .set(productData)

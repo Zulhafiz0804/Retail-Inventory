@@ -1,21 +1,23 @@
 package com.example.inventoryapps;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import android.content.SharedPreferences;
-import androidx.recyclerview.widget.LinearLayoutManager;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,10 +26,14 @@ import java.util.Set;
 public class StaffSearchActivity extends BaseActivity {
 
     private EditText etSearch;
-    private RecyclerView recentSearchesList, popularItemsList;
-    private ImageView ivSearchIcon;
-
+    private ImageView ivSearchIcon, ivFilterIcon;
+    private RecyclerView recentSearchesList;
     private FirebaseFirestore firestore;
+
+    private List<String> allSearchItems = new ArrayList<>();
+    private List<String> allCategoryIds = new ArrayList<>();
+    private List<String> filteredSearchItems = new ArrayList<>();
+    private String currentFilter = "all";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,31 +42,26 @@ public class StaffSearchActivity extends BaseActivity {
 
         setTitle("Search Products");
 
-        // Initialize views
         etSearch = findViewById(R.id.etSearch);
-        recentSearchesList = findViewById(R.id.recentSearchesList);
         ivSearchIcon = findViewById(R.id.ivSearchIcon);
+        ivFilterIcon = findViewById(R.id.ivFilterIcon);
+        recentSearchesList = findViewById(R.id.recentSearchesList);
 
-        // Firestore init
         firestore = FirebaseFirestore.getInstance();
 
-        // Load recent searches
-        loadRecentSearches();
-
-        // Search events
         ivSearchIcon.setOnClickListener(v -> handleSearch());
+        ivFilterIcon.setOnClickListener(this::showFilterMenu);
+
+        preloadInventoryItems();
     }
 
     private void handleSearch() {
-        String code = etSearch.getText().toString().trim().toLowerCase(); // Lowercase for consistent matching
+        String code = etSearch.getText().toString().trim().toLowerCase();
         if (TextUtils.isEmpty(code)) {
             Toast.makeText(this, "Please enter product code", Toast.LENGTH_SHORT).show();
             return;
         }
-        searchProductByCode(code);
-    }
 
-    private void searchProductByCode(String code) {
         firestore.collection("INVENTORY_ITEM")
                 .whereEqualTo("item_code", code)
                 .get()
@@ -68,11 +69,9 @@ public class StaffSearchActivity extends BaseActivity {
                     if (task.isSuccessful() && task.getResult() != null) {
                         QuerySnapshot snapshot = task.getResult();
                         if (!snapshot.isEmpty()) {
-                            DocumentSnapshot doc = snapshot.getDocuments().get(0); // ✅ CORRECT
-
+                            DocumentSnapshot doc = snapshot.getDocuments().get(0);
                             String productId = doc.getId();
 
-                            // ✅ Save search
                             saveRecentSearch(code);
 
                             Intent intent = new Intent(StaffSearchActivity.this, ProductDetailsActivity.class);
@@ -88,32 +87,99 @@ public class StaffSearchActivity extends BaseActivity {
                     }
                 });
     }
+
+    private void preloadInventoryItems() {
+        firestore.collection("INVENTORY_ITEM").get().addOnSuccessListener(snapshot -> {
+            allSearchItems.clear();
+            allCategoryIds.clear();
+
+            for (QueryDocumentSnapshot doc : snapshot) {
+                String itemCode = doc.getString("item_code");
+                String categoryId = doc.getString("category_id");
+
+                allSearchItems.add(itemCode != null ? itemCode.toLowerCase() : "");
+                allCategoryIds.add(categoryId != null ? categoryId : "unknown");
+            }
+
+            applyFilter(currentFilter);
+        });
+    }
+
+    private void applyFilter(String filter) {
+        currentFilter = filter.toLowerCase();
+        filteredSearchItems.clear();
+
+        String filterCat = null;
+        if (currentFilter.equals("men")) filterCat = "category01";
+        else if (currentFilter.equals("women")) filterCat = "category02";
+
+        for (int i = 0; i < allSearchItems.size(); i++) {
+            String cat = allCategoryIds.get(i);
+            boolean match = currentFilter.equals("all") || cat.equals(filterCat);
+            if (match) {
+                filteredSearchItems.add(allSearchItems.get(i));
+            }
+        }
+
+        loadRecentSearches();
+    }
+
+    private void showFilterMenu(View view) {
+        PopupMenu popup = new PopupMenu(StaffSearchActivity.this, view);
+        popup.getMenu().add("All");
+        popup.getMenu().add("Men");
+        popup.getMenu().add("Women");
+
+        popup.setOnMenuItemClickListener(item -> {
+            applyFilter(item.getTitle().toString().toLowerCase());
+            Toast.makeText(this, "Filter: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
+        popup.show();
+    }
+
     private void saveRecentSearch(String code) {
         SharedPreferences prefs = getSharedPreferences("search_prefs", MODE_PRIVATE);
         Set<String> set = prefs.getStringSet("recent_searches", new LinkedHashSet<>());
         Set<String> newSet = new LinkedHashSet<>(set);
 
-        // Avoid duplicates
         newSet.remove(code);
         newSet.add(code);
 
-        // Limit recent items to 10
         while (newSet.size() > 10) {
             String first = newSet.iterator().next();
             newSet.remove(first);
         }
 
         prefs.edit().putStringSet("recent_searches", newSet).apply();
-        loadRecentSearches(); // Refresh list
+        loadRecentSearches();
     }
 
-    // ✅ Add this method below
     private void loadRecentSearches() {
         SharedPreferences prefs = getSharedPreferences("search_prefs", MODE_PRIVATE);
         Set<String> set = prefs.getStringSet("recent_searches", new LinkedHashSet<>());
-        List<String> list = new ArrayList<>(set);
+        List<String> rawList = new ArrayList<>(set);
 
-        RecentSearchAdapter adapter = new RecentSearchAdapter(this, list);
+        List<String> finalList = new ArrayList<>();
+
+        if (currentFilter.equals("all")) {
+            finalList.addAll(rawList);
+        } else {
+            String filterCat = currentFilter.equals("men") ? "category01" : "category02";
+
+            for (String code : rawList) {
+                for (int i = 0; i < allSearchItems.size(); i++) {
+                    if (allSearchItems.get(i).equalsIgnoreCase(code)
+                            && allCategoryIds.get(i).equals(filterCat)) {
+                        finalList.add(code);
+                        break;
+                    }
+                }
+            }
+        }
+
+        RecentSearchAdapter adapter = new RecentSearchAdapter(this, finalList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recentSearchesList.setLayoutManager(layoutManager);
         recentSearchesList.setAdapter(adapter);
