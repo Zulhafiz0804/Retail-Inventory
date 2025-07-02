@@ -30,7 +30,7 @@ import java.util.Map;
 public class InventoryActivity extends BaseActivity {
 
     private EditText productPriceEditText;
-    private TextView itemCodeTextView, productNameEditText, productDescriptionEditText ;
+    private TextView itemCodeTextView, productNameEditText, productDescriptionEditText;
     private Button saveButton;
     private LinearLayout quantityContainer;
     private Spinner spinnerColor, spinnerSize;
@@ -50,6 +50,8 @@ public class InventoryActivity extends BaseActivity {
 
     private String preselectedColor = null;
     private String preselectedSize = null;
+
+    private final List<String> sizeOrder = Arrays.asList("S", "M", "L", "XL", "XXL");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,7 +147,6 @@ public class InventoryActivity extends BaseActivity {
                     colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerColor.setAdapter(colorAdapter);
 
-                    // Auto-select preselected color if available
                     if (preselectedColor != null && colorList.contains(preselectedColor)) {
                         spinnerColor.setSelection(colorList.indexOf(preselectedColor));
                     }
@@ -155,13 +156,18 @@ public class InventoryActivity extends BaseActivity {
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             String selectedColor = colorList.get(position);
                             Map<String, Object> sizes = (Map<String, Object>) quantitiesData.get(selectedColor);
-                            List<String> sizeList = new ArrayList<>(sizes.keySet());
+
+                            List<String> sizeList = new ArrayList<>();
+                            for (String size : sizeOrder) {
+                                if (sizes.containsKey(size)) {
+                                    sizeList.add(size);
+                                }
+                            }
 
                             ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(InventoryActivity.this, android.R.layout.simple_spinner_item, sizeList);
                             sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerSize.setAdapter(sizeAdapter);
 
-                            // Auto-select image
                             if (imageMap != null && imageMap.containsKey(selectedColor)) {
                                 Glide.with(InventoryActivity.this)
                                         .load(imageMap.get(selectedColor))
@@ -170,12 +176,10 @@ public class InventoryActivity extends BaseActivity {
                                 inventoryProductImage.setImageDrawable(null);
                             }
 
-                            // Auto-select preselected size if valid
                             if (preselectedSize != null && sizeList.contains(preselectedSize)) {
                                 spinnerSize.setSelection(sizeList.indexOf(preselectedSize));
                             }
 
-                            // Set default quantity
                             if (!sizeList.isEmpty()) {
                                 String firstSize = spinnerSize.getSelectedItem().toString();
                                 Object quantity = sizes.get(firstSize);
@@ -212,13 +216,14 @@ public class InventoryActivity extends BaseActivity {
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
         String updatedBy = prefs.getString("user_id", "unknown");
 
+        String docId = "log_" + System.currentTimeMillis();
+
         Map<String, Object> log = new HashMap<>();
         log.put("timestamp", Timestamp.now());
         log.put("action", "update_quantity");
-        log.put("item_id", code);
+        log.put("item_code", code);
+        log.put("log_id", docId);
         log.put("manager_id", updatedBy);
-
-        String docId = "log_" + System.currentTimeMillis();
 
         firestore.collection("ACTIVITY_LOG")
                 .document(docId)

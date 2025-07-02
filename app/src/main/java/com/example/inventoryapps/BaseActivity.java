@@ -74,7 +74,7 @@ public class BaseActivity extends AppCompatActivity {
         textUserName.setText(userName);
         textUserRole.setText(capitalize(userRole));
 
-        imageProfile.setImageResource(R.drawable.username1);
+        imageProfile.setImageResource(R.drawable.username3);
     }
 
     private String capitalize(String input) {
@@ -87,17 +87,41 @@ public class BaseActivity extends AppCompatActivity {
 
         if (role.equalsIgnoreCase("manager")) {
             if (id == R.id.nav_home) {
-                startActivity(new Intent(this, ManagerActivity.class));
+                if (this.getClass().equals(ManagerActivity.class)) {
+                    Toast.makeText(this, "You are already in Home page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, ManagerActivity.class));
+                }
             } else if (id == R.id.nav_add) {
-                startActivity(new Intent(this, AddProductActivity.class));
+                if (this.getClass().equals(AddProductActivity.class)) {
+                    Toast.makeText(this, "You are already in Add Item page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, AddProductActivity.class));
+                }
             } else if (id == R.id.nav_staff) {
-                startActivity(new Intent(this, StaffManagementActivity.class));
+                if (this.getClass().equals(StaffManagementActivity.class)) {
+                    Toast.makeText(this, "You are already in Staff Management page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, StaffManagementActivity.class));
+                }
             } else if (id == R.id.nav_about) {
-                startActivity(new Intent(this, AboutActivity.class));
+                if (this.getClass().equals(AboutActivity.class)) {
+                    Toast.makeText(this, "You are already in About page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, AboutActivity.class));
+                }
             } else if (id == R.id.nav_search) {
-                startActivity(new Intent(this, ManagerSearchActivity.class));
+                if (this.getClass().equals(ManagerSearchActivity.class)) {
+                    Toast.makeText(this, "You are already in Search page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, ManagerSearchActivity.class));
+                }
             } else if (id == R.id.nav_status) {
-                startActivity(new Intent(this, InventoryStatusActivity.class));
+                if (this.getClass().equals(InventoryStatusActivity.class)) {
+                    Toast.makeText(this, "You are already in Inventory Status page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, InventoryStatusActivity.class));
+                }
             } else if (id == R.id.nav_logout) {
                 performLogout();
             } else {
@@ -105,11 +129,23 @@ public class BaseActivity extends AppCompatActivity {
             }
         } else {
             if (id == R.id.navi_home) {
-                startActivity(new Intent(this, StaffActivity.class));
+                if (this.getClass().equals(StaffActivity.class)) {
+                    Toast.makeText(this, "You are already in Home page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, StaffActivity.class));
+                }
             } else if (id == R.id.nav_scan_qr) {
-                startActivity(new Intent(this, QRScanActivity.class));
+                if (this.getClass().equals(QRScanActivity.class)) {
+                    Toast.makeText(this, "You are already in QR Scanner page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, QRScanActivity.class));
+                }
             } else if (id == R.id.nav_search_code) {
-                startActivity(new Intent(this, StaffSearchActivity.class));
+                if (this.getClass().equals(StaffSearchActivity.class)) {
+                    Toast.makeText(this, "You are already in Search page", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, StaffSearchActivity.class));
+                }
             } else if (id == R.id.nav_logout) {
                 performLogout();
             } else {

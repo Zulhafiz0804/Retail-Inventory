@@ -1,4 +1,3 @@
-// MainActivity.java
 package com.example.inventoryapps;
 
 import android.content.Context;
@@ -19,10 +18,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText etUsername, etPassword;
     private Button btnLogin;
     private FirebaseFirestore db;
-
-    private Handler handler = new Handler();
-    private Runnable flipRunnable;
-    private boolean isFlipping = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +50,6 @@ public class MainActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
-        ShapeableImageView imagePlaceholder = findViewById(R.id.imagePlaceholder);
-        flipRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isFlipping) {
-                    imagePlaceholder.animate()
-                            .rotationYBy(180f)
-                            .setDuration(1000)
-                            .withEndAction(this)
-                            .start();
-                }
-            }
-        };
-        handler.post(flipRunnable);
-
         btnLogin.setOnClickListener(v -> {
             String email = etUsername.getText().toString().trim().toLowerCase();
             String password = etPassword.getText().toString().trim();
@@ -80,13 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 loginUser(email, password);
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isFlipping = false;
-        handler.removeCallbacks(flipRunnable);
     }
 
     private void loginUser(String email, String password) {

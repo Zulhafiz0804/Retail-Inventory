@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -46,7 +47,7 @@ public class ManagerActivity extends BaseActivity {
             String managerId = prefs.getString("user_id", null);
 
             if (itemId == R.id.nav_home) {
-                startActivity(new Intent(ManagerActivity.this, ManagerActivity.class));
+                Toast.makeText(this, "You are already in Home page", Toast.LENGTH_SHORT).show();
             } else if (itemId == R.id.nav_add) {
                 startActivity(new Intent(ManagerActivity.this, AddProductActivity.class)); // Updated flow
             } else if (itemId == R.id.nav_staff) {
@@ -68,7 +69,7 @@ public class ManagerActivity extends BaseActivity {
 
     // Dashboard button click handlers
     public void openHome(View view) {
-        startActivity(new Intent(this, ManagerActivity.class));
+        Toast.makeText(this, "You are already in Home page", Toast.LENGTH_SHORT).show();
     }
 
     public void openInventory(View view) {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -28,20 +29,25 @@ public class StaffActivity extends BaseActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
-// Buttons remain optional here if you're using LinearLayout click listeners
         btnSearchCode = findViewById(R.id.btnSearchStaff);
         btnScanQR = findViewById(R.id.btnScanQR);
     }
 
-    // Called from LinearLayout: android:onClick="onScanQRClick"
     public void onScanQRClick(View view) {
-        Intent intent = new Intent(StaffActivity.this, QRScanActivity.class);
-        startActivity(intent);
+        if (this.getClass().equals(QRScanActivity.class)) {
+            Toast.makeText(this, "You are already in QR Scanner page", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(StaffActivity.this, QRScanActivity.class);
+            startActivity(intent);
+        }
     }
 
-    // Called from LinearLayout: android:onClick="onSearchClick"
     public void onSearchClick(View view) {
-        Intent intent = new Intent(StaffActivity.this, StaffSearchActivity.class);
-        startActivity(intent);
+        if (this.getClass().equals(StaffSearchActivity.class)) {
+            Toast.makeText(this, "You are already in Search page", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(StaffActivity.this, StaffSearchActivity.class);
+            startActivity(intent);
+        }
     }
 }
