@@ -158,11 +158,9 @@ public class ProductDetailsActivity extends BaseActivity {
 
     private void updateProductImageAndQuantity(String color) {
         Log.d("DEBUG", "Selected color: " + color);
-
         if (image != null && image.containsKey(color)) {
             String imageUrl = image.get(color);
             Log.d("DEBUG", "Image URL: " + imageUrl);
-
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Glide.with(this)
                         .load(imageUrl)
@@ -177,17 +175,13 @@ public class ProductDetailsActivity extends BaseActivity {
 
         // Clear previous size views
         sizeContainer.removeAllViews();
-
         if (quantities != null && quantities.containsKey(color)) {
             Map<String, Long> sizes = quantities.get(color);
-
             // Define the size order
             List<String> sizeOrder = Arrays.asList("S", "M", "L", "XL", "XXL");
-
             for (String size : sizeOrder) {
                 if (sizes.containsKey(size)) {
                     Long quantity = sizes.get(size);
-
                     TextView sizeText = new TextView(this);
                     sizeText.setText("Size " + size + ": " + quantity);
                     sizeText.setTextSize(16);
@@ -201,14 +195,11 @@ public class ProductDetailsActivity extends BaseActivity {
                     sizeText.setLayoutParams(params);
 
                     sizeContainer.addView(sizeText);
-                }
-            }
+                }}
         } else {
             TextView noStock = new TextView(this);
             noStock.setText("No stock info available.");
             noStock.setTextColor(getResources().getColor(android.R.color.darker_gray));
             noStock.setTextSize(16);
             sizeContainer.addView(noStock);
-        }
-    }
-}
+        }}}

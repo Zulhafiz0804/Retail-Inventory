@@ -53,20 +53,28 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.StaffViewHol
 
         // Delete button action
         holder.btnDelete.setOnClickListener(v -> {
-            String collection = staff.role.equalsIgnoreCase("manager") ? "INVENTORY_MANAGER" : "STAFF";
+            new android.app.AlertDialog.Builder(context)
+                    .setTitle("Confirm Delete")
+                    .setMessage("Are you sure you want to delete this account?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        String collection = staff.role.equalsIgnoreCase("manager") ? "INVENTORY_MANAGER" : "STAFF";
 
-            FirebaseFirestore.getInstance().collection(collection)
-                    .document(staff.staffID) // Use document ID
-                    .delete()
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(context, "Deleted " + staff.username, Toast.LENGTH_SHORT).show();
-                        staffList.remove(holder.getAdapterPosition());
-                        notifyItemRemoved(holder.getAdapterPosition());
+                        FirebaseFirestore.getInstance().collection(collection)
+                                .document(staff.staffID)
+                                .delete()
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(context, "Deleted " + staff.username, Toast.LENGTH_SHORT).show();
+                                    staffList.remove(holder.getAdapterPosition());
+                                    notifyItemRemoved(holder.getAdapterPosition());
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(context, "Error deleting: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                                );
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(context, "Error deleting: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                    );
+                    .setNegativeButton("No", null)
+                    .show();
         });
+
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText etUsername, etPassword;
     private Button btnLogin;
     private FirebaseFirestore db;
+    private ImageView ivTogglePassword;
+    private boolean isPasswordVisible = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,20 @@ public class MainActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+
+        ivTogglePassword.setOnClickListener(v -> {
+            if (isPasswordVisible) {
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.hidden);
+            } else {
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.visibility);
+            }
+            isPasswordVisible = !isPasswordVisible;
+            etPassword.setSelection(etPassword.getText().length()); // Keep cursor at end
+        });
+
 
         btnLogin.setOnClickListener(v -> {
             String email = etUsername.getText().toString().trim().toLowerCase();
@@ -63,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email, String password) {
+        btnLogin.setEnabled(false); // prevent multiple clicks
+
         db.collection("INVENTORY_MANAGER")
                 .whereEqualTo("email", email)
                 .get()
@@ -88,9 +108,11 @@ public class MainActivity extends AppCompatActivity {
                             finish();
                         } else {
                             Toast.makeText(MainActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                            btnLogin.setEnabled(true);
                         }
 
                     } else {
+                        // Fallback to STAFF login
                         db.collection("STAFF")
                                 .whereEqualTo("email", email)
                                 .get()
@@ -116,17 +138,26 @@ public class MainActivity extends AppCompatActivity {
                                             finish();
                                         } else {
                                             Toast.makeText(MainActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                                            btnLogin.setEnabled(true);
                                         }
 
                                     } else {
                                         Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+                                        btnLogin.setEnabled(true);
                                     }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(MainActivity.this, "Login error (staff): " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Log.e("LoginDebug", "Staff login failed", e);
+                                    btnLogin.setEnabled(true);
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(MainActivity.this, "Login error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("LoginDebug", "Login failed", e);
+                    Toast.makeText(MainActivity.this, "Login error (manager): " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("LoginDebug", "Manager login failed", e);
+                    btnLogin.setEnabled(true);
                 });
     }
+
 }

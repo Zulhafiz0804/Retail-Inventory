@@ -107,9 +107,7 @@
                     android:textSize="16sp"
                     android:textColor="#757575"
                     android:paddingTop="8dp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
+                    android:visibility="gone" /> </LinearLayout>
             <!-- Color label -->
             <TextView
                 android:layout_width="match_parent"
@@ -119,7 +117,6 @@
                 android:textStyle="bold"
                 android:textColor="#212121"
                 android:layout_marginBottom="8dp" />
-
             <!-- Color spinner -->
             <Spinner
                 android:id="@+id/colorSpinner"
@@ -153,7 +150,6 @@
                         android:textColor="#212121"
                         android:layout_marginBottom="8dp" />
 
-                    <!-- Size container that will be filled dynamically -->
                     <LinearLayout
                         android:id="@+id/sizeContainer"
                         android:layout_width="match_parent"

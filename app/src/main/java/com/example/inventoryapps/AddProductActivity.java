@@ -1,14 +1,29 @@
 package com.example.inventoryapps;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 public class AddProductActivity extends BaseActivity {
@@ -19,10 +34,11 @@ public class AddProductActivity extends BaseActivity {
     private Spinner spinnerCategory;
 
     private FirebaseFirestore firestore;
-
-    // For category spinner
     private List<String> categoryNames = new ArrayList<>();
     private Map<String, String> categoryMap = new HashMap<>();
+
+    private static final int PICK_IMAGE_REQUEST = 101;
+    private View currentColorEntryForImage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,19 +56,17 @@ public class AddProductActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         btnAddColor = findViewById(R.id.btnAddColor);
         btnSaveProduct = findViewById(R.id.btnSaveProduct);
-        spinnerCategory = findViewById(R.id.spinnerCategory); // Ensure spinner exists in XML
+        spinnerCategory = findViewById(R.id.spinnerCategory);
 
         btnAddColor.setOnClickListener(v -> addColorEntry());
-
         btnSaveProduct.setOnClickListener(v -> saveProductToFirestore());
 
-        addColorEntry(); // Add default one
-
-        loadCategories(); // <-- Load categories into spinner
+        addColorEntry();
+        loadCategories();
     }
 
     private void loadCategories() {
-        FirebaseFirestore.getInstance().collection("PRODUCT_CATEGORY")
+        firestore.collection("PRODUCT_CATEGORY")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
@@ -65,14 +79,13 @@ public class AddProductActivity extends BaseActivity {
                             android.R.layout.simple_spinner_dropdown_item, categoryNames);
                     spinnerCategory.setAdapter(adapter);
 
-                    // 🟨 ADD SPINNER LISTENER TO SHOW DESCRIPTION
                     spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             String selectedCategoryName = categoryNames.get(position);
                             String selectedCategoryId = categoryMap.get(selectedCategoryName);
 
-                            FirebaseFirestore.getInstance().collection("PRODUCT_CATEGORY")
+                            firestore.collection("PRODUCT_CATEGORY")
                                     .whereEqualTo("category_id", selectedCategoryId)
                                     .limit(1)
                                     .get()
@@ -89,29 +102,37 @@ public class AddProductActivity extends BaseActivity {
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to load categories", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load categories", Toast.LENGTH_SHORT).show());
     }
 
     private void addColorEntry() {
         View colorEntryView = LayoutInflater.from(this).inflate(R.layout.color_entry, colorContainer, false);
 
-        Button btnPaste = colorEntryView.findViewById(R.id.btnPasteImageUrl);
-        EditText imageUrlField = colorEntryView.findViewById(R.id.editImageUrl);
+        Button btnSelectImage = colorEntryView.findViewById(R.id.btnSelectImage);
+        ImageView imgPreview = colorEntryView.findViewById(R.id.imgPreview);
 
-        btnPaste.setOnClickListener(v -> {
-            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            if (clipboard != null && clipboard.hasPrimaryClip()) {
-                android.content.ClipData clip = clipboard.getPrimaryClip();
-                if (clip != null && clip.getItemCount() > 0) {
-                    String pastedText = clip.getItemAt(0).coerceToText(this).toString();
-                    imageUrlField.setText(pastedText);
-                }
-            }
+        btnSelectImage.setOnClickListener(v -> {
+            currentColorEntryForImage = colorEntryView;
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
         });
 
         colorContainer.addView(colorEntryView);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            if (currentColorEntryForImage != null) {
+                ImageView imgPreview = currentColorEntryForImage.findViewById(R.id.imgPreview);
+                Glide.with(this).load(imageUri).into(imgPreview);
+                currentColorEntryForImage.setTag(imageUri);
+            }
+        }
     }
 
     private void saveProductToFirestore() {
@@ -123,22 +144,33 @@ public class AddProductActivity extends BaseActivity {
         String categoryId = categoryMap.get(selectedCategory);
 
         if (name.isEmpty() || desc.isEmpty() || code.isEmpty() || priceStr.isEmpty() || categoryId == null) {
-            Toast.makeText(this, "Fill all main product fields including category", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Fill all product fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         double price = Double.parseDouble(priceStr);
 
-        Map<String, String> imageMap = new HashMap<>();
-        Map<String, Map<String, Integer>> quantitiesMap = new HashMap<>();
+        SharedPreferences prefs = getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        String managerId = prefs.getString("user_id", null);
+        String role = prefs.getString("user_role", null);
 
-        for (int i = 0; i < colorContainer.getChildCount(); i++) {
+        if (managerId == null || !"manager".equals(role)) {
+            Toast.makeText(this, "Not authorized", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Map<String, Integer>> quantitiesMap = new HashMap<>();
+        Map<String, String> imageMap = new HashMap<>();
+        int total = colorContainer.getChildCount();
+        int[] uploadedCount = {0};
+
+        for (int i = 0; i < total; i++) {
             View colorView = colorContainer.getChildAt(i);
             String color = ((EditText) colorView.findViewById(R.id.editColorName)).getText().toString().trim();
-            String imageUrl = ((EditText) colorView.findViewById(R.id.editImageUrl)).getText().toString().trim();
+            Uri imageUri = (Uri) colorView.getTag();
 
-            if (color.isEmpty() || imageUrl.isEmpty()) {
-                Toast.makeText(this, "Fill all fields in color entry " + (i + 1), Toast.LENGTH_SHORT).show();
+            if (color.isEmpty() || imageUri == null) {
+                Toast.makeText(this, "Fill color & image for entry " + (i + 1), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -149,15 +181,28 @@ public class AddProductActivity extends BaseActivity {
             int xxl = parseQty(colorView.findViewById(R.id.editSizeXXL));
 
             Map<String, Integer> sizeMap = new HashMap<>();
-            sizeMap.put("S", s);
-            sizeMap.put("M", m);
-            sizeMap.put("L", l);
-            sizeMap.put("XL", xl);
-            sizeMap.put("XXL", xxl);
-
-            imageMap.put(color, imageUrl);
+            sizeMap.put("S", s); sizeMap.put("M", m); sizeMap.put("L", l);
+            sizeMap.put("XL", xl); sizeMap.put("XXL", xxl);
             quantitiesMap.put(color, sizeMap);
+
+            String filename = code + "_" + color + ".jpg";
+            StorageReference ref = FirebaseStorage.getInstance().getReference("product_images/" + filename);
+            ref.putFile(imageUri).addOnSuccessListener(task -> {
+                ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                    imageMap.put(color, uri.toString());
+                    uploadedCount[0]++;
+                    if (uploadedCount[0] == total) {
+                        saveFinalProduct(name, desc, code, price, categoryId, managerId, imageMap, quantitiesMap);
+                    }
+                });
+            }).addOnFailureListener(e -> Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }
+    }
+
+    private void saveFinalProduct(String name, String desc, String code, double price,
+                                  String categoryId, String managerId,
+                                  Map<String, String> imageMap,
+                                  Map<String, Map<String, Integer>> quantitiesMap) {
 
         Map<String, Object> productData = new HashMap<>();
         productData.put("item_name", name);
@@ -166,12 +211,47 @@ public class AddProductActivity extends BaseActivity {
         productData.put("price", price);
         productData.put("image", imageMap);
         productData.put("quantities", quantitiesMap);
-        productData.put("category_id", categoryId); // Add category ID
+        productData.put("category_id", categoryId);
+        productData.put("manager_id", managerId);
 
-        firestore.collection("INVENTORY_ITEM").document(code)
-                .set(productData)
-                .addOnSuccessListener(unused -> Toast.makeText(this, "Product saved!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        Bitmap qrBitmap = generateQRCodeBitmap(code);
+        if (qrBitmap == null) {
+            Toast.makeText(this, "QR code generation failed", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        qrBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] qrData = baos.toByteArray();
+
+        StorageReference qrRef = FirebaseStorage.getInstance().getReference("qr_codes/" + code + ".png");
+        qrRef.putBytes(qrData).addOnSuccessListener(taskSnapshot -> {
+            qrRef.getDownloadUrl().addOnSuccessListener(qrUri -> {
+                productData.put("qr_url", qrUri.toString());
+
+                firestore.collection("INVENTORY_ITEM").document(code)
+                        .set(productData)
+                        .addOnSuccessListener(unused -> Toast.makeText(this, "Product saved with QR!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            });
+        }).addOnFailureListener(e -> Toast.makeText(this, "QR upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private Bitmap generateQRCodeBitmap(String text) {
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 512, 512);
+            Bitmap bitmap = Bitmap.createBitmap(512, 512, Bitmap.Config.RGB_565);
+            for (int x = 0; x < 512; x++) {
+                for (int y = 0; y < 512; y++) {
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private int parseQty(EditText editText) {

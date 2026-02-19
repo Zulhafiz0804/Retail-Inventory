@@ -35,6 +35,8 @@ public class InventoryStatusActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_inventory_status, findViewById(R.id.content_frame), true);
 
+        setTitle("Inventory Status");
+
         recyclerView = findViewById(R.id.recyclerViewInventory);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -78,10 +80,10 @@ public class InventoryStatusActivity extends BaseActivity {
         if (item.getItemId() == R.id.action_toggle_sort) {
             if (isAscending) {
                 adapter.sortByStockLevelDescending();
-                item.setIcon(R.drawable.descending1); // Optional: change icon
+                item.setIcon(R.drawable.descending3); // Optional: change icon
             } else {
                 adapter.sortByStockLevel();
-                item.setIcon(R.drawable.ascending1); // Optional: change icon
+                item.setIcon(R.drawable.ascending3); // Optional: change icon
             }
             isAscending = !isAscending;
             return true;

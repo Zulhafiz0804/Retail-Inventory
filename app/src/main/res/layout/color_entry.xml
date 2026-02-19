@@ -18,25 +18,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/editImageUrl"
-            android:layout_width="361dp"
+        <ImageView
+            android:id="@+id/imgPreview"
+            android:layout_width="104dp"
             android:layout_height="104dp"
-            android:layout_weight="1"
-            android:hint="Image URL (e.g., Direct Link from Postimg)" />
+            android:layout_marginEnd="12dp"
+            android:background="@android:color/darker_gray"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder1" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnPasteImageUrl"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnSelectImage"
+            android:layout_width="132dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
             android:background="@drawable/btn_login_gradient"
-            android:text="Paste" />
+            android:text="Choose Image"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <TextView

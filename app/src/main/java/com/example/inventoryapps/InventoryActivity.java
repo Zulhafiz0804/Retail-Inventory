@@ -31,7 +31,7 @@ public class InventoryActivity extends BaseActivity {
 
     private EditText productPriceEditText;
     private TextView itemCodeTextView, productNameEditText, productDescriptionEditText;
-    private Button saveButton;
+    private Button saveButton, deleteButton;
     private LinearLayout quantityContainer;
     private Spinner spinnerColor, spinnerSize;
     private EditText editQuantity;
@@ -58,11 +58,14 @@ public class InventoryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_inventory, findViewById(R.id.content_frame), true);
 
+        setTitle("Manage Inventory");
+
         productNameEditText = findViewById(R.id.editProductName);
         itemCodeTextView = findViewById(R.id.itemCodeTextView);
         productDescriptionEditText = findViewById(R.id.editProductDescription);
         productPriceEditText = findViewById(R.id.editProductPrice);
         saveButton = findViewById(R.id.btnSave);
+        deleteButton = findViewById(R.id.btnDeleteProduct);
         quantityContainer = findViewById(R.id.quantityContainer);
         spinnerColor = findViewById(R.id.spinnerColor);
         spinnerSize = findViewById(R.id.spinnerSize);
@@ -123,6 +126,29 @@ public class InventoryActivity extends BaseActivity {
                             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                     );
         });
+        deleteButton.setOnClickListener(v -> {
+            if (item_code == null) {
+                Toast.makeText(this, "No product selected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Product")
+                    .setMessage("Are you sure you want to delete this product from inventory?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        firestore.collection("INVENTORY_ITEM").document(item_code)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
+                                    finish(); // Close the activity
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this, "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        });
+
     }
 
     private void loadProductFromFirestore(String code) {
@@ -293,4 +319,5 @@ public class InventoryActivity extends BaseActivity {
                         Toast.makeText(this, "Error updating quantities: " + e.getMessage(), Toast.LENGTH_SHORT).show()
                 );
     }
+
 }

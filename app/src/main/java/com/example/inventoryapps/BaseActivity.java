@@ -74,7 +74,7 @@ public class BaseActivity extends AppCompatActivity {
         textUserName.setText(userName);
         textUserRole.setText(capitalize(userRole));
 
-        imageProfile.setImageResource(R.drawable.username3);
+        imageProfile.setImageResource(R.drawable.profile3);
     }
 
     private String capitalize(String input) {

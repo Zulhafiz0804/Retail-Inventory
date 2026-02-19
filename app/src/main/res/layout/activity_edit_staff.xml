@@ -88,15 +88,34 @@
                         android:text="Password"
                         android:textColor="#000000"/>
 
-                    <EditText
-                        android:id="@+id/etPassword"
+                    <!-- Password Field with Toggle -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:inputType="textPassword"
-                        android:padding="12dp"
-                        android:hint="Enter password"
-                        android:background="@android:drawable/edit_text"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginBottom="16dp">
+
+                        <EditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="textPassword"
+                            android:padding="12dp"
+                            android:hint="Enter password"
+                            android:background="@android:drawable/edit_text"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="12dp"
+                            android:paddingEnd="48dp" />
+
+                        <ImageView
+                            android:id="@+id/ivTogglePassword"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/hidden"
+                            android:contentDescription="Toggle Password Visibility" />
+                    </FrameLayout>
+
 
                     <TextView
                         android:layout_width="wrap_content"

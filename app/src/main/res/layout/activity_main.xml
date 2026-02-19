@@ -80,7 +80,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:hint="Email"
-                        android:drawableStart="@drawable/email1"
+                        android:drawableStart="@drawable/email"
                         android:drawablePadding="10dp"
                         android:background="@drawable/edittext_background"
                         android:paddingStart="16dp"
@@ -90,19 +90,35 @@
                         android:layout_marginBottom="16dp" />
 
                     <!-- Password Input -->
-                    <EditText
-                        android:id="@+id/etPassword"
+                    <!-- Password Field with Toggle -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
-                        android:hint="Password"
-                        android:drawableStart="@drawable/ic_password"
-                        android:drawablePadding="10dp"
-                        android:background="@drawable/edittext_background"
-                        android:paddingStart="16dp"
-                        android:inputType="textPassword"
-                        android:textColor="#000"
-                        android:textColorHint="#999"
-                        android:layout_marginBottom="20dp" />
+                        android:layout_marginBottom="20dp">
+
+                        <EditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="Password"
+                            android:drawableStart="@drawable/password"
+                            android:drawablePadding="10dp"
+                            android:background="@drawable/edittext_background"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="48dp"
+                            android:inputType="textPassword"
+                            android:textColor="#000"
+                            android:textColorHint="#999" />
+
+                        <ImageView
+                            android:id="@+id/ivTogglePassword"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/hidden"
+                            android:contentDescription="Toggle Password Visibility" />
+                    </FrameLayout>
 
                     <!-- Login Button -->
                     <androidx.appcompat.widget.AppCompatButton

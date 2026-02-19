@@ -1,6 +1,7 @@
 package com.example.inventoryapps;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.*;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -13,6 +14,8 @@ public class EditStaffActivity extends BaseActivity {
     private Button btnSave;
     private FirebaseFirestore db;
     private String staffID, username, role, phone, managerId;
+    private ImageView ivTogglePassword;
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,22 @@ public class EditStaffActivity extends BaseActivity {
         etRole = findViewById(R.id.etRole);
         etPhone = findViewById(R.id.etPhone);
         btnSave = findViewById(R.id.btnSave);
+        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+
+        ivTogglePassword.setOnClickListener(v -> {
+            if (isPasswordVisible) {
+                // Hide password
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.hidden);
+            } else {
+                // Show password
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.visibility);
+            }
+            isPasswordVisible = !isPasswordVisible;
+            etPassword.setSelection(etPassword.getText().length()); // Move cursor to end
+        });
+
 
         db = FirebaseFirestore.getInstance();
 

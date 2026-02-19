@@ -161,7 +161,6 @@
                         android:textStyle="bold"
                         android:textColor="#222222"
                         android:layout_marginBottom="6dp" />
-
                     <Spinner
                         android:id="@+id/spinnerSize"
                         android:layout_width="match_parent"
@@ -170,6 +169,13 @@
                         android:background="@android:drawable/btn_dropdown"
                         android:padding="12dp" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Available Quantiy"
+                        android:textStyle="bold"
+                        android:textColor="#222222"
+                        android:layout_marginBottom="6dp" />
                     <!-- Quantity -->
                     <EditText
                         android:id="@+id/editQuantity"
@@ -182,6 +188,14 @@
                         android:textSize="16sp"
                         android:textColor="#222222"
                         android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Price"
+                        android:textStyle="bold"
+                        android:textColor="#222222"
+                        android:layout_marginBottom="6dp" />
 
                     <!-- Price -->
                     <EditText
@@ -212,6 +226,20 @@
                 android:textSize="18sp"
                 android:layout_marginBottom="24dp"
                 android:fontFamily="sans-serif-medium" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDeleteProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Product"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_delete_rounded"
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:layout_marginBottom="32dp"
+                android:fontFamily="sans-serif-medium" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

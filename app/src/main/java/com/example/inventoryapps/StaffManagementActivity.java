@@ -66,7 +66,7 @@ public class StaffManagementActivity extends BaseActivity {
                 staffList.add(staff);
             }
 
-            // Load managers after loading staff
+            // Load managers
             firestore.collection("INVENTORY_MANAGER").get().addOnSuccessListener(managerSnapshots -> {
                 for (QueryDocumentSnapshot doc : managerSnapshots) {
                     AddStaffActivity.Staff manager = doc.toObject(AddStaffActivity.Staff.class);
@@ -77,10 +77,9 @@ public class StaffManagementActivity extends BaseActivity {
                 }
 
                 staffAdapter.notifyDataSetChanged(); // Update RecyclerView
-            }).addOnFailureListener(e ->
-                    Toast.makeText(this, "Error loading managers", Toast.LENGTH_SHORT).show()
-            );
-
+            })
+                    .addOnFailureListener(e ->
+                    Toast.makeText(this, "Error loading managers", Toast.LENGTH_SHORT).show());
         }).addOnFailureListener(e ->
                 Toast.makeText(this, "Error loading staff", Toast.LENGTH_SHORT).show()
         );
